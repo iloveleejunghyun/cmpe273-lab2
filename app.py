@@ -11,7 +11,7 @@ DATABASE = 'mydb.db'
 def	create_student():
 	data = request.get_data().decode("utf-8")
 	name = json.loads(data)["name"]
-	
+
 	sqliteDB = sqlite3.connect(DATABASE)
 	cur = sqliteDB.cursor()
 	cur.execute("INSERT INTO student (name,addr,city,pin) VALUES (?,?,?,?)",(name, '', '', ''))
@@ -20,7 +20,7 @@ def	create_student():
 	result = cur.fetchall()
 	cur_id = result[0][0]
 	sqliteDB.close()
-	
+
 	return {
 		"id": cur_id, 
 		"name": name
@@ -47,7 +47,7 @@ def	get_student(id):
 def	create_class():
 	data = request.get_data().decode("utf-8")
 	name = json.loads(data)["name"]
-	
+
 	sqliteDB = sqlite3.connect(DATABASE)
 	cur = sqliteDB.cursor()
 	cur.execute("INSERT INTO clazz (name) VALUES (?)",(name,))
@@ -56,7 +56,7 @@ def	create_class():
 	result = cur.fetchall()
 	cur_id = result[0][0]
 	sqliteDB.close()
-	
+
 	return {
 		"id": cur_id, 
 		"name": name
@@ -67,11 +67,11 @@ def	create_class():
 def	get_class(id):
 	sqliteDB = sqlite3.connect(DATABASE)
 	cur = sqliteDB.cursor()
-	
+
 	cur.execute(f"select * from clazz where id = {id}")
 	result = cur.fetchall()
 	class_name = result[0][1]
-	
+
 	cur.execute(f"select * from classstudent where class_id = {id}")
 	result = cur.fetchall()
 	student_list = []
@@ -98,22 +98,22 @@ def	add_student_to_class():
 	json_data = json.loads(data)
 	class_id = json_data["class_id"]
 	student_id = json_data["student_id"]
-	
+
 	sqliteDB = sqlite3.connect(DATABASE)
 	cur = sqliteDB.cursor()
 	cur.execute("INSERT INTO classstudent (class_id, student_id) VALUES (?,?)",(class_id, student_id))
 	sqliteDB.commit()
-	
+
 	cur.execute(f"select * from clazz where id = {class_id}")
 	result = cur.fetchall()
 	class_name = result[0][1]
-	
+
 	cur.execute(f"select * from student where id = {student_id}")
 	result = cur.fetchall()
 	student_name = result[0][1]
-	
+
 	sqliteDB.close()
-	
+
 	return {
 		"id": class_id, 
 		"name":class_name,
